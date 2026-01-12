@@ -16,15 +16,19 @@ export const analyzeImageForPerson = async (images: string[]): Promise<string> =
   const parts = prepareParts(images);
 
   const systemInstruction = `
-    Você é um Especialista em Biometria Fashion. Analise as imagens para definir o BIOTIPO REAL da modelo.
-    FOCO ABSOLUTO: Se a modelo for plus-size, descreva como "full-figured model with realistic plus-size curvy physique". 
-    Seja específico sobre etnia, tom de pele e tipo de cabelo se visível.
+    Você é um Engenheiro de Produto Fashion e Especialista em Visão Computacional.
+    Analise as imagens com foco em FIDELIDADE TÉCNICA ABSOLUTA:
+    1. TEXTOS E LOGOS: Identifique tipografias, marcas, patches ou bordados. Descreva sua posição exata e estilo.
+    2. SILHUETA: Defina se a peça é oversized, ajustada, assimétrica. Mapeie volumes e formas.
+    3. BIOTIPO: Identifique o biotipo da modelo nas fotos para manter consistência ou sugerir variações realistas.
+    
+    Seja técnico e descritivo em Português.
   `;
 
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
-      contents: [{ parts: [...parts, { text: "Faça a análise biométrica e de vestuário de todas as referências." }] }],
+      contents: [{ parts: [...parts, { text: "Faça um raio-x técnico da peça e da modelo." }] }],
       config: { systemInstruction, temperature: 0.1 },
     });
     return response.text?.trim() || "";
@@ -38,18 +42,18 @@ export const suggestAllFields = async (images: string[], type: 'video' | 'image'
   const parts = prepareParts(images);
 
   const systemInstruction = `
-    Você é um Diretor de Arte de Moda. Analise as referências e crie um briefing em Português:
-    - scenario: Local que valorize as cores.
-    - modelDescription: Descrição anatômica inegociável baseada na foto (inclua biotipo real).
-    - action: Movimento/Pose.
-    - cameraStyle: Estética cinematográfica.
-    - details: Detalhes técnicos do tecido.
+    Você é um Diretor de Arte de Moda focado em High-Fidelity. Analise as referências e crie um briefing:
+    - scenario: Local que não ofusque os detalhes da peça.
+    - modelDescription: Descrição baseada no biotipo real das fotos.
+    - action: Movimentos que mostrem o caimento real do tecido.
+    - cameraStyle: Close-ups técnicos e movimentos suaves.
+    - details: Mapeie bordados, logos, texturas e acabamentos de costura.
   `;
 
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: [{ parts: [...parts, { text: "Gere o briefing técnico baseado em todas as referências." }] }],
+      contents: [{ parts: [...parts, { text: "Gere o briefing técnico priorizando a integridade da peça." }] }],
       config: {
         systemInstruction,
         responseMimeType: "application/json",
@@ -77,7 +81,7 @@ export const suggestFieldContent = async (field: keyof FashionAnswers, currentAn
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const parts = prepareParts(images);
   
-  const systemInstruction = `Sugira um detalhe técnico em Português para o campo ${field} mantendo consistência com as fotos.`;
+  const systemInstruction = `Sugira um detalhe técnico em Português para o campo ${field} focado em manter a fidelidade da marca e forma da peça.`;
 
   try {
     const response = await ai.models.generateContent({
@@ -96,23 +100,24 @@ export const generateFashionPrompt = async (answers: FashionAnswers, images: str
   const parts = prepareParts(images);
 
   const systemInstruction = `
-    Você é o melhor engenheiro de prompts do mundo para modelos de vídeo e imagem como Sora, Veo 3 e Midjourney.
+    Você é o Diretor de Tecnologia da Coleção.IA, especialista em prompts para Sora, Veo 3 e Runway.
+    Seu objetivo é gerar um prompt que preserve a ROUPA ACIMA DE TUDO.
     
-    Crie um prompt em INGLÊS extremamente detalhado.
-    DIRETRIZES:
-    1. SUBJECT: Fidelidade absoluta ao peso, curvas e biotipo da modelo nas fotos. Use termos técnicos como "physically accurate proportions", "realistic skin texture".
-    2. CLOTHING: Descreva a construção da roupa, costuras, caimento do tecido sob gravidade e interação com a luz.
-    3. CINEMATOGRAPHY: Use vocabulário de cinema (ex: anamorphic lens, 8k, photorealistic, cinematic lighting).
-    4. NO ALTERATIONS: Proibir expressamente mudanças no peso ou design original.
+    REGRAS DE OURO PARA O PROMPT (EM INGLÊS):
+    1. BRANDING & TEXT: Use termos como "precise graphic placement", "identical branding typography", "sharp text legibility on fabric".
+    2. GARMENT PHYSICS: Descreva o peso do tecido (ex: "heavyweight 400gsm cotton", "fluid silk drape").
+    3. SILHOUETTE CONSISTENCY: Enfatize a forma (ex: "maintain the specific boxy oversized silhouette", "preserve the exact cropped ratio").
+    4. VARIATION CASTING: Integre as variações de pele/cabelo (se fornecidas) sem alterar o biotipo estrutural da modelo que veste a peça.
+    5. LIGHTING: Iluminação que revele a textura real da trama do tecido.
     
-    Retorne apenas o prompt final estruturado.
+    Retorne apenas o prompt técnico final em inglês.
   `;
 
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
-      contents: [{ parts: [...parts, { text: `Dados do formulário: ${JSON.stringify(answers)}` }] }],
-      config: { systemInstruction, temperature: 0.3 },
+      contents: [{ parts: [...parts, { text: `Briefing de Produção: ${JSON.stringify(answers)}` }] }],
+      config: { systemInstruction, temperature: 0.2 },
     });
     return response.text?.trim() || "Error generating high-fidelity prompt.";
   } catch (error) {

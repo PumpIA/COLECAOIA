@@ -8,6 +8,11 @@ export interface FashionAnswers {
   action: string;
   cameraStyle: string;
   details: string;
+  // Campos de variação dinâmica
+  skinTone?: string;
+  hairStyle?: string;
+  ethnicity?: string;
+  ageRange?: string;
 }
 
 export enum AppStatus {
